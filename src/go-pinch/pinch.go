@@ -127,7 +127,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
             return nil, err
         }
         
-        var l int16 = int16(rec.sizeOfCentralDirectory)
+        var l int32 = int32(rec.sizeOfCentralDirectory)
         var i int32 = 0
 
         // Read the entries
@@ -150,7 +150,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
                     entry.relativeOffsetOfLocalFileHeader = uint32(dir.relativeOffsetOfLocalFileHeaderL + dir.relativeOffsetOfLocalFileHeaderH * math.MaxUint16)
                     entries[entry.Filename] = entry
                 }
-                l = l - (46 + int16(dir.fileNameLength + dir.extraFieldLength + dir.fileCommentLength))
+                l = l - int32(46 + dir.fileNameLength + dir.extraFieldLength + dir.fileCommentLength)
                 i = i + int32(46 + dir.fileNameLength + dir.extraFieldLength + dir.fileCommentLength)
             
             } else {
