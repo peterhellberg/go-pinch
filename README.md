@@ -30,7 +30,7 @@ func main() {
   
   entries, err := pinch.GetZipDirectory("http://example/path/to.zip")
 
-  file, err := pinch.GetZipFile(url, entries["file.json"])
+  file, err := pinch.GetZipFile("http://example/path/to.zip", entries["file.json"])
 
 }
 ```
