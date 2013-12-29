@@ -26,74 +26,74 @@
 package main
 
 import (
-	"go-pinch"
-	"os"
-	"fmt"
-	"log"
-	"net/url"
-	"strings"
+    "go-pinch"
+    "os"
+    "fmt"
+    "log"
+    "net/url"
+    "strings"
 )
 
 func main() {
 
-	args := getArgs(os.Args)
+    args := getArgs(os.Args)
 
-	url := args[0]
+    url := args[0]
 
-	entries, err := pinch.GetZipDirectory(url)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatalln("exiting")
-	}
+    entries, err := pinch.GetZipDirectory(url)
+    if err != nil {
+        fmt.Println(err)
+        log.Fatalln("exiting")
+    }
 
-	if len(args) == 2 {
-		
-		var entry pinch.ZipEntry = entries[args[1]]
+    if len(args) == 2 {
+        
+        var entry pinch.ZipEntry = entries[args[1]]
 
-		if len(entry.Filename) > 0 {
+        if len(entry.Filename) > 0 {
 
-			file, err := pinch.GetZipFile(url, entry)
-			if err != nil {
-				fmt.Println(err)
-				log.Fatalln("exiting")
-			}
+            file, err := pinch.GetZipFile(url, entry)
+            if err != nil {
+                fmt.Println(err)
+                log.Fatalln("exiting")
+            }
 
-			os.Stdout.Write(file)
+            os.Stdout.Write(file)
 
-		} else {
+        } else {
 
-			fmt.Printf("File not found\n")
-		
-		}
-	
-	} else {
+            fmt.Printf("File not found\n")
+        
+        }
+    
+    } else {
 
-		for _, entry := range entries {
-			fmt.Println(entry.Filename)
-		}
+        for _, entry := range entries {
+            fmt.Println(entry.Filename)
+        }
 
-	}
+    }
 }
 
 func getArgs(args []string) []string {
 
-	// Make sure that we got three command line arguments
-	if len(args) < 2 || len(args) > 3 {
-		fmt.Println("Usage: pinch <url> [ <file> ]")
-		log.Fatalln("exiting")
-	}
+    // Make sure that we got three command line arguments
+    if len(args) < 2 || len(args) > 3 {
+        fmt.Println("Usage: pinch <url> [ <file> ]")
+        log.Fatalln("exiting")
+    }
 
-	// Parse the URI parameter
-	_, err := url.ParseRequestURI(args[1])
+    // Parse the URI parameter
+    _, err := url.ParseRequestURI(args[1])
 
-	if err != nil || !strings.HasPrefix(args[1], "http") {
-		fmt.Println("Invalid URL")
-		log.Fatalln("exiting")
-	}
+    if err != nil || !strings.HasPrefix(args[1], "http") {
+        fmt.Println("Invalid URL")
+        log.Fatalln("exiting")
+    }
 
-	if len(args) == 2 {
-		return []string{ args[1] }
-	}
+    if len(args) == 2 {
+        return []string{ args[1] }
+    }
 
-	return []string{ args[1], args[2] }
+    return []string{ args[1], args[2] }
 }
