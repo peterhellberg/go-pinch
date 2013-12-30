@@ -27,7 +27,7 @@ package main
 
 import (
 	"fmt"
-	"go-pinch"
+	"github.com/peterhellberg/go-pinch/pinch"
 	"log"
 	"net/url"
 	"os"
