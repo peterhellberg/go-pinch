@@ -1,17 +1,21 @@
 #
-# Old school makefile, just type make on the command line
+# Old school makefile
+#
+# $ export GOPATH=`pwd`
+# $ go get -u github.com/peterhellberg/go-pinch
+# $ make
 #
 
-all: pinch test1 test2 done
+all: pinch-test test1 test2 done
 
-GOSRCS = 					\
-	main.go 				\
+GOSRCS = 		\
+	main.go		\
 	pinch/pinch.go
 
 TEST_URL  = http://peterhellberg.github.com/pinch/test.zip
 TEST_FILE = data.json
 
-pinch: $(GOSRCS)
+pinch-test: $(GOSRCS)
 	@echo =[COMPILE]======================================================
 	go build -o=pinch-test
 
