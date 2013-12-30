@@ -34,8 +34,7 @@ import (
 )
 
 func main() {
-	entries, _ := pinch.GetZipDirectory("http://peterhellberg.github.com/pinch/test.zip")
-	file, _ := pinch.GetZipFile("http://peterhellberg.github.com/pinch/test.zip", entries["data.json"])
+	file, _ := pinch.Get("http://peterhellberg.github.com/pinch/test.zip", "data.json")
 
 	os.Stdout.Write(file)
 }
