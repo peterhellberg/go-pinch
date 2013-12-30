@@ -4,17 +4,23 @@
 
 Retrieve a file from inside a zip file, over the network!
 
-Pinch makes it possible to download a specific file from within 
-a ZIP file over HTTP/1.1, using nothing but the Go Standard 
-Library ([net/http](http://golang.org/pkg/net/http/) and 
+Pinch makes it possible to download a specific file from within
+a ZIP file over HTTP/1.1, using nothing but the Go Standard
+Library ([net/http](http://golang.org/pkg/net/http/) and
 [compress/flate](http://golang.org/pkg/compress/flate/))
 
 Earlier versions was written in [Objective-C](https://github.com/epatel/pinch-objc) and [Ruby](https://github.com/peterhellberg/pinch)
 
+## Installation
+
+```bash
+go get -u github.com/peterhellberg/go-pinch
+```
+
 ## Usage
 
 ```bash
-$ ./pinch http://example/path/to.zip file.json
+$ go-pinch http://example/path/to.zip file.json
 ```
 
 Or from Go directly:
@@ -23,14 +29,12 @@ Or from Go directly:
 package main
 
 import (
-  "go-pinch"
+	"github.com/peterhellberg/go-pinch/pinch"
 )
 
 func main() {
-  
-  entries, err := pinch.GetZipDirectory("http://example/path/to.zip")
 
-  file, err := pinch.GetZipFile("http://example/path/to.zip", entries["file.json"])
-
+	entries, err := pinch.GetZipDirectory("http://example/path/to.zip")
+	file, err := pinch.GetZipFile("http://example/path/to.zip", entries["file.json"])
 }
 ```
