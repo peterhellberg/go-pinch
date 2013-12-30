@@ -13,18 +13,19 @@ TEST_FILE = data.json
 
 pinch: $(GOSRCS)
 	@echo =[COMPILE]======================================================
-	GOPATH=`pwd` go build pinch.go
+	GOPATH=`pwd` go build -o=pinch-test pinch.go
 
 test1:
 	@echo =[TEST 1]=======================================================
-	./pinch $(TEST_URL)
+	./pinch-test $(TEST_URL)
 
 test2:
 	@echo =[TEST 2]=======================================================
-	./pinch $(TEST_URL) $(TEST_FILE)
+	./pinch-test $(TEST_URL) $(TEST_FILE)
 
 done:
 	@echo =[DONE]=========================================================
+	rm pinch-test
 
 clean:
 	rm -vf *~ */*~ */*/*~ pinch
