@@ -42,16 +42,10 @@ import (
 func main() {
 	url, fn := getArgs(os.Args)
 
-	entries, err := pinch.GetZipDirectory(url)
-
-	handleError(err)
-
 	if len(fn) > 0 {
-		entry := entries[fn]
-
-		getFile(url, fn, &entry)
+		writeFileToStdout(url, fn)
 	} else {
-		listFiles(&entries)
+		listFilesToStdout(url)
 	}
 }
 
@@ -75,21 +69,21 @@ func getArgs(args []string) (string, string) {
 	return args[1], args[2]
 }
 
-func getFile(url, fn string, entry *pinch.ZipEntry) {
-	if len(entry.Filename) > 0 {
-		file, err := pinch.GetZipFile(url, *entry)
+func writeFileToStdout(url, fn string) {
+	file, err := pinch.Get(url, fn)
 
-		handleError(err)
+	handleError(err)
 
-		os.Stdout.Write(file)
-	} else {
-		fatal("File not found")
-	}
+	os.Stdout.Write(file)
 }
 
-func listFiles(entries *map[string]pinch.ZipEntry) {
-	for _, entry := range *entries {
-		log.Println(entry.Filename)
+func listFilesToStdout(url string) {
+	entries, err := pinch.GetZipDirectory(url)
+
+	handleError(err)
+
+	for _, entry := range entries {
+		os.Stdout.Write([]byte(entry.Filename + "\n"))
 	}
 }
 
