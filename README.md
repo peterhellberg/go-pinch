@@ -40,3 +40,7 @@ func main() {
 	os.Stdout.Write(file)
 }
 ```
+
+## Other implementations
+
+ - [Pinch in Java](https://github.com/carlbenson/Pinch) by Carl Benson.
