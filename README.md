@@ -30,11 +30,13 @@ package main
 
 import (
 	"github.com/peterhellberg/go-pinch/pinch"
+	"os"
 )
 
 func main() {
+	entries, _ := pinch.GetZipDirectory("http://peterhellberg.github.com/pinch/test.zip")
+	file, _ := pinch.GetZipFile("http://peterhellberg.github.com/pinch/test.zip", entries["data.json"])
 
-	entries, err := pinch.GetZipDirectory("http://example/path/to.zip")
-	file, err := pinch.GetZipFile("http://example/path/to.zip", entries["file.json"])
+	os.Stdout.Write(file)
 }
 ```
