@@ -5,9 +5,9 @@ package pinch
 
 type ZipEntry struct {
 	Filename                        string
-	compressedSize                  uint32
-	uncompressedSize                uint32
-	compressionMethod               uint16
-	extraFieldLength                uint16
-	relativeOffsetOfLocalFileHeader uint32
+	CompressedSize                  uint32
+	UncompressedSize                uint32
+	CompressionMethod               uint16
+	ExtraFieldLength                uint16
+	RelativeOffsetOfLocalFileHeader uint32
 }

@@ -4,22 +4,22 @@
 package pinch
 
 type ZipEndRecord struct {
-	endOfCentralDirectorySignature            uint32
-	numberOfThisDisk                          uint16
-	diskWhereCentralDirectoryStarts           uint16
-	numberOfCentralDirectoryRecordsOnThisDisk uint16
-	totalNumberOfCentralDirectoryRecords      uint16
-	sizeOfCentralDirectory                    uint32
-	offsetOfStartOfCentralDirectory           uint32
-	zipfileCommentLength                      uint16
+	EndOfCentralDirectorySignature            uint32
+	NumberOfThisDisk                          uint16
+	DiskWhereCentralDirectoryStarts           uint16
+	NumberOfCentralDirectoryRecordsOnThisDisk uint16
+	TotalNumberOfCentralDirectoryRecords      uint16
+	SizeOfCentralDirectory                    uint32
+	OffsetOfStartOfCentralDirectory           uint32
+	ZipfileCommentLength                      uint16
 }
 
 func (r *ZipEndRecord) StartOffset() int64 {
-	return int64(r.offsetOfStartOfCentralDirectory)
+	return int64(r.OffsetOfStartOfCentralDirectory)
 }
 
 func (r *ZipEndRecord) EndOffset() int64 {
-	s := r.sizeOfCentralDirectory + r.offsetOfStartOfCentralDirectory - 1
+	s := r.SizeOfCentralDirectory + r.OffsetOfStartOfCentralDirectory - 1
 
 	return int64(s)
 }

@@ -8,32 +8,32 @@ import (
 )
 
 type ZipFileHeader struct {
-	localFileHeaderSignature uint32
-	versionNeededToExtract   uint16
-	generalPurposeBitFlag    uint16
-	compressionMethod        uint16
-	fileLastModificationTime uint16
-	fileLastModificationDate uint16
-	crc32L                   uint16
-	crc32H                   uint16
-	compressedSizeL          uint16
-	compressedSizeH          uint16
-	uncompressedSizeL        uint16
-	uncompressedSizeH        uint16
-	fileNameLength           uint16
-	extraFieldLength         uint16
+	LocalFileHeaderSignature uint32
+	VersionNeededToExtract   uint16
+	GeneralPurposeBitFlag    uint16
+	CompressionMethod        uint16
+	FileLastModificationTime uint16
+	FileLastModificationDate uint16
+	Crc32L                   uint16
+	Crc32H                   uint16
+	CompressedSizeL          uint16
+	CompressedSizeH          uint16
+	UncompressedSizeL        uint16
+	UncompressedSizeH        uint16
+	FileNameLength           uint16
+	ExtraFieldLength         uint16
 }
 
 func (f *ZipFileHeader) StartOffset() uint32 {
-	l := uint32(f.fileNameLength) + uint32(f.extraFieldLength)
+	l := uint32(f.FileNameLength) + uint32(f.ExtraFieldLength)
 
 	return 30 + l
 }
 
 func (f *ZipFileHeader) CompressedSize() uint32 {
-	return uint32(f.compressedSizeL) + (uint32(f.compressedSizeH) << 16)
+	return uint32(f.CompressedSizeL) + (uint32(f.CompressedSizeH) << 16)
 }
 
 func (f *ZipFileHeader) OriginalSize() uint32 {
-	return uint32(f.compressedSizeL + f.compressedSizeH*math.MaxUint16)
+	return uint32(f.CompressedSizeL + f.CompressedSizeH*math.MaxUint16)
 }

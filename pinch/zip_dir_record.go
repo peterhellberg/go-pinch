@@ -8,36 +8,36 @@ import (
 )
 
 type ZipDirRecord struct {
-	centralDirectoryFileHeaderSignature uint32
-	versionMadeBy                       uint16
-	versionNeededToExtract              uint16
-	generalPurposeBitFlag               uint16
-	compressionMethod                   uint16
-	fileLastModificationTime            uint16
-	fileLastModificationDate            uint16
-	crc32                               uint32
-	compressedSize                      uint32
-	uncompressedSize                    uint32
-	fileNameLength                      uint16
-	extraFieldLength                    uint16
-	fileCommentLength                   uint16
-	diskNumberWhereFileStarts           uint16
-	internalFileAttributes              uint16
-	externalFileAttributesL             uint16 // split in low+high for struct packing
-	externalFileAttributesH             uint16
-	relativeOffsetOfLocalFileHeaderL    uint16 // split in low+high for struct packing
-	relativeOffsetOfLocalFileHeaderH    uint16
+	CentralDirectoryFileHeaderSignature uint32
+	VersionMadeBy                       uint16
+	VersionNeededToExtract              uint16
+	GeneralPurposeBitFlag               uint16
+	CompressionMethod                   uint16
+	FileLastModificationTime            uint16
+	FileLastModificationDate            uint16
+	Crc32                               uint32
+	CompressedSize                      uint32
+	UncompressedSize                    uint32
+	FileNameLength                      uint16
+	ExtraFieldLength                    uint16
+	FileCommentLength                   uint16
+	DiskNumberWhereFileStarts           uint16
+	InternalFileAttributes              uint16
+	ExternalFileAttributesL             uint16 // split in low+high for struct packing
+	ExternalFileAttributesH             uint16
+	RelativeOffsetOfLocalFileHeaderL    uint16 // split in low+high for struct packing
+	RelativeOffsetOfLocalFileHeaderH    uint16
 }
 
 func (d *ZipDirRecord) RelativeOffset() uint32 {
-	l := d.relativeOffsetOfLocalFileHeaderL
-	h := d.relativeOffsetOfLocalFileHeaderH * math.MaxUint16
+	l := d.RelativeOffsetOfLocalFileHeaderL
+	h := d.RelativeOffsetOfLocalFileHeaderH * math.MaxUint16
 
 	return uint32(l + h)
 }
 
 func (d *ZipDirRecord) CombinedLength() int32 {
-	l := d.fileNameLength + d.extraFieldLength + d.fileCommentLength
+	l := d.FileNameLength + d.ExtraFieldLength + d.FileCommentLength
 
 	return int32(46 + l)
 }

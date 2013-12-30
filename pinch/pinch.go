@@ -38,9 +38,9 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	// Using hardcoded 30 as go length include some padding,
 	// 16 added because seen extraFieldLength differ between
 	// file header and directory entry
-	length := 30 + entry.compressedSize + uint32(len(entry.Filename)) + uint32(entry.extraFieldLength) + 16
+	length := 30 + entry.CompressedSize + uint32(len(entry.Filename)) + uint32(entry.ExtraFieldLength) + 16
 
-	body, err := fetchPartialData(url, int64(entry.relativeOffsetOfLocalFileHeader), int64(length-1))
+	body, err := fetchPartialData(url, int64(entry.RelativeOffsetOfLocalFileHeader), int64(length-1))
 
 	if err != nil {
 		return nil, err
@@ -49,10 +49,10 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	var file *ZipFileHeader
 	file = (*ZipFileHeader)(unsafe.Pointer(&body[0]))
 
-	if file.localFileHeaderSignature == 0x04034b50 {
+	if file.LocalFileHeaderSignature == 0x04034b50 {
 		offset := file.StartOffset()
 
-		if file.compressionMethod == 8 {
+		if file.CompressionMethod == 8 {
 			data := body[offset : offset+file.CompressedSize()]
 
 			zipreader := flate.NewReader(bytes.NewReader(data))
@@ -64,7 +64,7 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 			zipreader.Close()
 
 			return b, nil
-		} else if file.compressionMethod == 0 {
+		} else if file.CompressionMethod == 0 {
 			return body[offset : offset+file.OriginalSize()], nil
 		}
 
@@ -113,7 +113,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 			return nil, err
 		}
 
-		var l int32 = int32(rec.sizeOfCentralDirectory)
+		var l int32 = int32(rec.SizeOfCentralDirectory)
 		var i int32 = 0
 
 		// Read the entries
@@ -123,12 +123,12 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 			var dir *ZipDirRecord
 			dir = (*ZipDirRecord)(unsafe.Pointer(&buf[0]))
 
-			if dir.centralDirectoryFileHeaderSignature == 0x02014b50 {
+			if dir.CentralDirectoryFileHeaderSignature == 0x02014b50 {
 				var entry ZipEntry
 
 				// Only collect files (skipping directories)
-				if (dir.externalFileAttributesH & 0x4000) != 0x4000 {
-					fn := string(body[i+46 : i+46+int32(dir.fileNameLength)])
+				if (dir.ExternalFileAttributesH & 0x4000) != 0x4000 {
+					fn := string(body[i+46 : i+46+int32(dir.FileNameLength)])
 
 					populateEntry(&entry, dir, fn)
 
@@ -150,11 +150,11 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 
 func populateEntry(entry *ZipEntry, dir *ZipDirRecord, fn string) *ZipEntry {
 	entry.Filename = fn
-	entry.compressedSize = dir.compressedSize
-	entry.uncompressedSize = dir.uncompressedSize
-	entry.compressionMethod = dir.compressionMethod
-	entry.extraFieldLength = dir.extraFieldLength
-	entry.relativeOffsetOfLocalFileHeader = dir.RelativeOffset()
+	entry.CompressedSize = dir.CompressedSize
+	entry.UncompressedSize = dir.UncompressedSize
+	entry.CompressionMethod = dir.CompressionMethod
+	entry.ExtraFieldLength = dir.ExtraFieldLength
+	entry.RelativeOffsetOfLocalFileHeader = dir.RelativeOffset()
 
 	return entry
 }
