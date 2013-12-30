@@ -1,99 +1,104 @@
-/*---------------------------------------------------------------------------
+// Copyright (c) 2013 Peter Hellberg, Edward Patel.
+// Licensed under the MIT License found in the LICENSE file.
 
-Copyright (c) 2013 Peter Hellberg, Edward Patel
+/*
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+Retrieve a file from inside a zip file, over the network!
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+Pinch makes it possible to download a specific file from within
+a ZIP file over HTTP/1.1, using nothing but the Go Standard Library.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+(http://golang.org/pkg/net/http/ and http://golang.org/pkg/compress/flate/)
 
----------------------------------------------------------------------------*/
+Earlier versions were written in Objective-C and Ruby.
 
+Installation
+
+Just go get it:
+
+		go get -u github.com/peterhellberg/go-pinch
+
+Usage
+
+You get a list of files if you only pass a URL:
+
+		go-pinch http://example/path/to.zip
+
+In order to pinch one of the files in the ZIP:
+
+		go-pinch http://example/path/to.zip file.json > file.json
+
+*/
 package main
 
 import (
-	"fmt"
-	"github.com/peterhellberg/go-pinch/pinch"
 	"log"
 	"net/url"
 	"os"
-	"strings"
+
+	"github.com/peterhellberg/go-pinch/pinch"
 )
 
 func main() {
-
-	args := getArgs(os.Args)
-
-	url := args[0]
+	url, fn := getArgs(os.Args)
 
 	entries, err := pinch.GetZipDirectory(url)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatalln("exiting")
-	}
 
-	if len(args) == 2 {
+	handleError(err)
 
-		var entry pinch.ZipEntry = entries[args[1]]
+	if len(fn) > 0 {
+		entry := entries[fn]
 
-		if len(entry.Filename) > 0 {
-
-			file, err := pinch.GetZipFile(url, entry)
-			if err != nil {
-				fmt.Println(err)
-				log.Fatalln("exiting")
-			}
-
-			os.Stdout.Write(file)
-
-		} else {
-
-			fmt.Printf("File not found\n")
-
-		}
-
+		getFile(url, fn, &entry)
 	} else {
-
-		for _, entry := range entries {
-			fmt.Println(entry.Filename)
-		}
-
+		listFiles(&entries)
 	}
 }
 
-func getArgs(args []string) []string {
-
-	// Make sure that we got three command line arguments
+func getArgs(args []string) (string, string) {
+	// Make sure that we got two or three command line arguments
 	if len(args) < 2 || len(args) > 3 {
-		fmt.Println("Usage: pinch <url> [ <file> ]")
-		log.Fatalln("exiting")
+		fatal("Usage: pinch <url> [file]")
 	}
 
 	// Parse the URI parameter
 	_, err := url.ParseRequestURI(args[1])
 
-	if err != nil || !strings.HasPrefix(args[1], "http") {
-		fmt.Println("Invalid URL")
-		log.Fatalln("exiting")
+	if err != nil || args[1][0:4] != "http" {
+		fatal("Invalid URL")
 	}
 
 	if len(args) == 2 {
-		return []string{args[1]}
+		return args[1], ""
 	}
 
-	return []string{args[1], args[2]}
+	return args[1], args[2]
+}
+
+func getFile(url, fn string, entry *pinch.ZipEntry) {
+	if len(entry.Filename) > 0 {
+		file, err := pinch.GetZipFile(url, *entry)
+
+		handleError(err)
+
+		os.Stdout.Write(file)
+	} else {
+		fatal("File not found")
+	}
+}
+
+func listFiles(entries *map[string]pinch.ZipEntry) {
+	for _, entry := range *entries {
+		log.Println(entry.Filename)
+	}
+}
+
+func fatal(v ...interface{}) {
+	log.Fatalln(v...)
+}
+
+func handleError(err error) {
+	if err != nil {
+		fatal(err)
+	}
 }
