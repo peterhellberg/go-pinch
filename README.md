@@ -9,7 +9,7 @@ a ZIP file over HTTP/1.1, using nothing but the Go Standard
 Library ([net/http](http://golang.org/pkg/net/http/) and
 [compress/flate](http://golang.org/pkg/compress/flate/))
 
-Earlier versions was written in [Objective-C](https://github.com/epatel/pinch-objc) and [Ruby](https://github.com/peterhellberg/pinch)
+Earlier versions were written in [Objective-C](https://github.com/epatel/pinch-objc) and [Ruby](https://github.com/peterhellberg/pinch)
 
 ## Installation
 
