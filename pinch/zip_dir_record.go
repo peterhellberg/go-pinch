@@ -36,16 +36,17 @@ func (d *ZipDirRecord) CombinedLength() int32 {
 }
 
 func (d *ZipDirRecord) ExternalFileAttributes() uint32 {
-	l := d.ExternalFileAttributesL
-	h := d.ExternalFileAttributesH << 16
-	return uint32(l + h)
+	l := uint32(d.ExternalFileAttributesL)
+	h := (uint32(d.ExternalFileAttributesH) << 16)
+
+	return l + h
 }
 
 func (d *ZipDirRecord) RelativeOffset() uint32 {
-	l := d.RelativeOffsetOfLocalFileHeaderL
-	h := d.RelativeOffsetOfLocalFileHeaderH << 16
+	l := uint32(d.RelativeOffsetOfLocalFileHeaderL)
+	h := (uint32(d.RelativeOffsetOfLocalFileHeaderH) << 16)
 
-	return uint32(l + h)
+	return l + h
 }
 
 func (d *ZipDirRecord) echo() {

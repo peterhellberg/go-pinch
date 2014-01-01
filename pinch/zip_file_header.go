@@ -27,9 +27,15 @@ func (f *ZipFileHeader) StartOffset() uint32 {
 }
 
 func (f *ZipFileHeader) CompressedSize() uint32 {
-	return uint32(f.CompressedSizeL) + (uint32(f.CompressedSizeH) << 16)
+	l := uint32(f.CompressedSizeL)
+	h := (uint32(f.CompressedSizeH) << 16)
+
+	return l + h
 }
 
 func (f *ZipFileHeader) OriginalSize() uint32 {
-	return uint32(f.CompressedSizeL + (f.CompressedSizeH << 16))
+	l := uint32(f.CompressedSizeL)
+	h := (uint32(f.CompressedSizeH) << 16)
+
+	return l + h
 }
