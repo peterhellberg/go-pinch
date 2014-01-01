@@ -38,19 +38,12 @@ func Get(url, fn string) ([]byte, error) {
 func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	entry.echo()
 
-	// Using hardcoded 30 as go length include some padding,
-	// 16 added because seen extraFieldLength differ between
-	// file header and directory entry
-
 	fnSize := uint32(len(entry.Filename))
-
 	offset := int64(entry.RelativeOffsetOfLocalFileHeader)
-	length := int64(30+fnSize+uint32(entry.ExtraFieldLength)+entry.CompressedSize) + 3
+	length := int64(30+fnSize+uint32(entry.ExtraFieldLength)+entry.CompressedSize) + 16
 
 	echo("\nGet file data:")
-
 	body, err := fetchPartialData(url, offset, offset+length)
-	// body, err := fetchPartialData(url, int64(594495), 594495+332)
 
 	if err != nil {
 		return nil, err
@@ -174,7 +167,7 @@ func populateEntry(entry *ZipEntry, dir *ZipDirRecord, fn string) *ZipEntry {
 }
 
 func echo(v ...interface{}) {
-	if true {
+	if false {
 		fmt.Print("\033[1;30m")
 		fmt.Println(v...)
 		fmt.Print("\033[0m")
