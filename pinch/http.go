@@ -25,6 +25,8 @@ func getContentLength(url string) (int64, error) {
 }
 
 func fetchPartialData(url string, sof, eof int64) ([]byte, error) {
+	echo("Pinch", sof, "-", eof, "(", eof-sof, ")")
+
 	// Create the bytes range string
 	bytesRange := fmt.Sprintf("bytes=%d-%d", sof, eof)
 

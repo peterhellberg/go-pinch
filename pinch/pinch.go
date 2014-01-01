@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"errors"
+	"fmt"
 	"unsafe"
 )
 
@@ -35,12 +36,22 @@ func Get(url, fn string) ([]byte, error) {
 
 // Get a file from URL and ZipEntry
 func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
+	echo("\nFilename", entry.Filename)
+	echo("ZipEntry CompressedSize", entry.CompressedSize)
+	echo("ZipEntry UncompressedSize", entry.UncompressedSize)
+	echo("ZipEntry CompressionMethod", entry.CompressionMethod)
+	echo("ZipEntry ExtraFieldLength", entry.ExtraFieldLength)
+	echo("ZipEntry RelativeOffsetOfLocalFileHeader", entry.RelativeOffsetOfLocalFileHeader)
+
 	// Using hardcoded 30 as go length include some padding,
 	// 16 added because seen extraFieldLength differ between
 	// file header and directory entry
 	length := 30 + entry.CompressedSize + uint32(len(entry.Filename)) + uint32(entry.ExtraFieldLength) + 16
 
-	body, err := fetchPartialData(url, int64(entry.RelativeOffsetOfLocalFileHeader), int64(length-1))
+	o := int64(entry.RelativeOffsetOfLocalFileHeader)
+
+	echo("\nGet Zip File:")
+	body, err := fetchPartialData(url, 594828-o, (594828-o)+int64(length-1))
 
 	if err != nil {
 		return nil, err
@@ -48,6 +59,8 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 
 	var file *ZipFileHeader
 	file = (*ZipFileHeader)(unsafe.Pointer(&body[0]))
+
+	echo(594828 - o)
 
 	if file.LocalFileHeaderSignature == 0x04034b50 {
 		offset := file.StartOffset()
@@ -88,7 +101,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 		of = cl - 4096
 	}
 
-	// Get 4k from end of file and look for the End Record
+	echo("\nGet 4k from EOF and look for the End Record:")
 	body, err := fetchPartialData(url, of, cl)
 
 	if err != nil {
@@ -97,16 +110,18 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 
 	entries := make(map[string]ZipEntry)
 
+	var dir *ZipDirRecord
+	var rec *ZipEndRecord
+
 	// Find the End Record
-	endoffset := bytes.Index(body, []byte{0x50, 0x4b, 0x05, 0x06})
+	endOffset := bytes.Index(body, []byte{0x50, 0x4b, 0x05, 0x06})
 
-	if endoffset >= 0 {
-		buf := body[endoffset : endoffset+int(unsafe.Sizeof(ZipEndRecord{}))]
+	if endOffset >= 0 {
+		buf := body[endOffset : endOffset+int(unsafe.Sizeof(ZipEndRecord{}))]
 
-		var rec *ZipEndRecord
 		rec = (*ZipEndRecord)(unsafe.Pointer(&buf[0]))
 
-		// Get the Central Directory Record
+		echo("\nGet the Central Directory Record:")
 		body, err := fetchPartialData(url, rec.StartOffset(), rec.EndOffset())
 
 		if err != nil {
@@ -120,7 +135,6 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 		for l > 46 {
 			buf = body[i : i+int32(unsafe.Sizeof(ZipDirRecord{}))]
 
-			var dir *ZipDirRecord
 			dir = (*ZipDirRecord)(unsafe.Pointer(&buf[0]))
 
 			if dir.CentralDirectoryFileHeaderSignature == 0x02014b50 {
@@ -139,7 +153,6 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 				i = i + dir.CombinedLength()
 			} else {
 				err = errors.New("Corrupt directory (signature error)")
-
 				break
 			}
 		}
@@ -157,4 +170,12 @@ func populateEntry(entry *ZipEntry, dir *ZipDirRecord, fn string) *ZipEntry {
 	entry.RelativeOffsetOfLocalFileHeader = dir.RelativeOffset()
 
 	return entry
+}
+
+func echo(v ...interface{}) {
+	debug := true
+
+	if debug {
+		fmt.Println(v...)
+	}
 }
