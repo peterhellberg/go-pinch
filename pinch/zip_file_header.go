@@ -3,10 +3,6 @@
 
 package pinch
 
-import (
-	"math"
-)
-
 type ZipFileHeader struct {
 	LocalFileHeaderSignature uint32
 	VersionNeededToExtract   uint16
@@ -35,5 +31,5 @@ func (f *ZipFileHeader) CompressedSize() uint32 {
 }
 
 func (f *ZipFileHeader) OriginalSize() uint32 {
-	return uint32(f.CompressedSizeL + f.CompressedSizeH*math.MaxUint16)
+	return uint32(f.CompressedSizeL + (f.CompressedSizeH << 16))
 }

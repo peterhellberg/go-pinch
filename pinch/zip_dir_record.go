@@ -3,10 +3,6 @@
 
 package pinch
 
-import (
-	"math"
-)
-
 type ZipDirRecord struct {
 	CentralDirectoryFileHeaderSignature uint32
 	VersionMadeBy                       uint16
@@ -31,7 +27,7 @@ type ZipDirRecord struct {
 
 func (d *ZipDirRecord) RelativeOffset() uint32 {
 	l := d.RelativeOffsetOfLocalFileHeaderL
-	h := d.RelativeOffsetOfLocalFileHeaderH * math.MaxUint16
+	h := d.RelativeOffsetOfLocalFileHeaderH << 16
 
 	return uint32(l + h)
 }
