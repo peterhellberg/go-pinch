@@ -8,9 +8,14 @@
 
 all: pinch-test test1-1 test1-2 test2-1 test2-2 done
 
-GOSRCS = 		\
-	main.go		\
-	pinch/pinch.go
+GOSRCS = \
+	main.go                  \
+	pinch/http.go            \
+	pinch/pinch.go           \
+	pinch/zip_dir_record.go  \
+	pinch/zip_end_record.go  \
+	pinch/zip_entry.go       \
+	pinch/zip_file_header.go
 
 TEST1_URL  = http://peterhellberg.github.com/pinch/test.zip
 TEST1_FILE = data.json
