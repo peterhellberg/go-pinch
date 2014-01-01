@@ -36,17 +36,21 @@ func Get(url, fn string) ([]byte, error) {
 
 // Get a file from URL and ZipEntry
 func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
-	echoZipEntry(&entry)
+	entry.echo()
 
 	// Using hardcoded 30 as go length include some padding,
 	// 16 added because seen extraFieldLength differ between
 	// file header and directory entry
-	length := 30 + entry.CompressedSize + uint32(len(entry.Filename)) + uint32(entry.ExtraFieldLength) + 16
 
-	o := int64(entry.RelativeOffsetOfLocalFileHeader)
+	fnSize := uint32(len(entry.Filename))
 
-	echo("\nGet Zip File:")
-	body, err := fetchPartialData(url, o, o+int64(length-1))
+	offset := int64(entry.RelativeOffsetOfLocalFileHeader)
+	length := int64(30+fnSize+uint32(entry.ExtraFieldLength)+entry.CompressedSize) + 3
+
+	echo("\nGet file data:")
+
+	body, err := fetchPartialData(url, offset, offset+length)
+	// body, err := fetchPartialData(url, int64(594495), 594495+332)
 
 	if err != nil {
 		return nil, err
@@ -55,13 +59,11 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	var file *ZipFileHeader
 	file = (*ZipFileHeader)(unsafe.Pointer(&body[0]))
 
-	echo(594828 - o)
-
 	if file.LocalFileHeaderSignature == 0x04034b50 {
-		offset := file.StartOffset()
+		startOffset := file.StartOffset()
 
 		if file.CompressionMethod == 8 {
-			data := body[offset : offset+file.CompressedSize()]
+			data := body[startOffset : startOffset+file.CompressedSize()]
 
 			zipreader := flate.NewReader(bytes.NewReader(data))
 
@@ -73,7 +75,7 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 
 			return b, nil
 		} else if file.CompressionMethod == 0 {
-			return body[offset : offset+file.OriginalSize()], nil
+			return body[startOffset : startOffset+file.OriginalSize()], nil
 		}
 
 		err = errors.New("Unimplemented compression method")
@@ -116,7 +118,9 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 
 		rec = (*ZipEndRecord)(unsafe.Pointer(&buf[0]))
 
-		echo("\nGet the Central Directory Record:")
+		rec.echo()
+
+		echo("Get the Central Directory Record:")
 		body, err := fetchPartialData(url, rec.StartOffset(), rec.EndOffset())
 
 		if err != nil {
@@ -151,6 +155,8 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 				break
 			}
 		}
+
+		dir.echo()
 	}
 
 	return entries, err
@@ -167,20 +173,10 @@ func populateEntry(entry *ZipEntry, dir *ZipDirRecord, fn string) *ZipEntry {
 	return entry
 }
 
-func echoZipEntry(entry *ZipEntry) {
-	echo("\nZipEntry:")
-	echo(" Filename                       ", entry.Filename)
-	echo(" CompressedSize                 ", entry.CompressedSize)
-	echo(" UncompressedSize               ", entry.UncompressedSize)
-	echo(" CompressionMethod              ", entry.CompressionMethod)
-	echo(" ExtraFieldLength               ", entry.ExtraFieldLength)
-	echo(" RelativeOffsetOfLocalFileHeader", entry.RelativeOffsetOfLocalFileHeader)
-}
-
 func echo(v ...interface{}) {
-	debug := true
-
-	if debug {
+	if true {
+		fmt.Print("\033[1;30m")
 		fmt.Println(v...)
+		fmt.Print("\033[0m")
 	}
 }

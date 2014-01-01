@@ -11,3 +11,13 @@ type ZipEntry struct {
 	ExtraFieldLength                uint16
 	RelativeOffsetOfLocalFileHeader uint32
 }
+
+func (e *ZipEntry) echo() {
+	echo("ZipEntry")
+	echo(" Filename                           ", e.Filename)
+	echo(" CompressedSize                     ", e.CompressedSize)
+	echo(" UncompressedSize                   ", e.UncompressedSize)
+	echo(" CompressionMethod                  ", e.CompressionMethod)
+	echo(" ExtraFieldLength                   ", e.ExtraFieldLength)
+	echo(" RelativeOffsetOfLocalFileHeader    ", e.RelativeOffsetOfLocalFileHeader)
+}

@@ -3,6 +3,10 @@
 
 package pinch
 
+import (
+	"fmt"
+)
+
 type ZipDirRecord struct {
 	CentralDirectoryFileHeaderSignature uint32
 	VersionMadeBy                       uint16
@@ -25,6 +29,18 @@ type ZipDirRecord struct {
 	RelativeOffsetOfLocalFileHeaderH    uint16
 }
 
+func (d *ZipDirRecord) CombinedLength() int32 {
+	l := d.FileNameLength + d.ExtraFieldLength + d.FileCommentLength
+
+	return int32(46 + l)
+}
+
+func (d *ZipDirRecord) ExternalFileAttributes() uint32 {
+	l := d.ExternalFileAttributesL
+	h := d.ExternalFileAttributesH << 16
+	return uint32(l + h)
+}
+
 func (d *ZipDirRecord) RelativeOffset() uint32 {
 	l := d.RelativeOffsetOfLocalFileHeaderL
 	h := d.RelativeOffsetOfLocalFileHeaderH << 16
@@ -32,8 +48,23 @@ func (d *ZipDirRecord) RelativeOffset() uint32 {
 	return uint32(l + h)
 }
 
-func (d *ZipDirRecord) CombinedLength() int32 {
-	l := d.FileNameLength + d.ExtraFieldLength + d.FileCommentLength
-
-	return int32(46 + l)
+func (d *ZipDirRecord) echo() {
+	echo("ZipDirRecord")
+	echo(" CentralDirectoryFileHeaderSignature", fmt.Sprintf("%U", d.CentralDirectoryFileHeaderSignature))
+	echo(" VersionMadeBy                      ", d.VersionMadeBy)
+	echo(" VersionNeededToExtract             ", d.VersionNeededToExtract)
+	echo(" GeneralPurposeBitFlag              ", d.GeneralPurposeBitFlag)
+	echo(" CompressionMethod                  ", d.CompressionMethod)
+	echo(" FileLastModificationTime           ", d.FileLastModificationTime)
+	echo(" FileLastModificationDate           ", d.FileLastModificationDate)
+	echo(" Crc32                              ", d.Crc32)
+	echo(" CompressedSize                     ", d.CompressedSize)
+	echo(" UncompressedSize                   ", d.UncompressedSize)
+	echo(" FileNameLength                     ", d.FileNameLength)
+	echo(" ExtraFieldLength                   ", d.ExtraFieldLength)
+	echo(" FileCommentLength                  ", d.FileCommentLength)
+	echo(" DiskNumberWhereFileStarts          ", d.DiskNumberWhereFileStarts)
+	echo(" InternalFileAttributes             ", d.InternalFileAttributes)
+	echo(" ExternalFileAttributes()           ", d.ExternalFileAttributes())
+	echo(" RelativeOffset()                   ", d.RelativeOffset())
 }

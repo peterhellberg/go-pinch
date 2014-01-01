@@ -3,6 +3,10 @@
 
 package pinch
 
+import (
+	"fmt"
+)
+
 type ZipEndRecord struct {
 	EndOfCentralDirectorySignature            uint32
 	NumberOfThisDisk                          uint16
@@ -19,7 +23,21 @@ func (r *ZipEndRecord) StartOffset() int64 {
 }
 
 func (r *ZipEndRecord) EndOffset() int64 {
-	s := r.SizeOfCentralDirectory + r.OffsetOfStartOfCentralDirectory - 1
+	s := r.SizeOfCentralDirectory + r.OffsetOfStartOfCentralDirectory
 
 	return int64(s)
+}
+
+func (r *ZipEndRecord) echo() {
+	echo("ZipEndRecord")
+
+	echo(" EndOfCentralDirectorySignature           ", fmt.Sprintf("%U", r.EndOfCentralDirectorySignature))
+	echo(" NumberOfThisDisk                         ", r.NumberOfThisDisk)
+	echo(" DiskWhereCentralDirectoryStarts          ", r.DiskWhereCentralDirectoryStarts)
+	echo(" NumberOfCentralDirectoryRecordsOnThisDisk", r.NumberOfCentralDirectoryRecordsOnThisDisk)
+	echo(" TotalNumberOfCentralDirectoryRecords     ", r.TotalNumberOfCentralDirectoryRecords)
+	echo(" SizeOfCentralDirectory                   ", r.SizeOfCentralDirectory)
+	echo(" OffsetOfStartOfCentralDirectory          ", r.OffsetOfStartOfCentralDirectory)
+	echo(" ZipfileCommentLength                     ", r.ZipfileCommentLength)
+	echo("")
 }
