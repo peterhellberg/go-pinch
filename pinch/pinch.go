@@ -36,12 +36,7 @@ func Get(url, fn string) ([]byte, error) {
 
 // Get a file from URL and ZipEntry
 func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
-	echo("\nFilename", entry.Filename)
-	echo("ZipEntry CompressedSize", entry.CompressedSize)
-	echo("ZipEntry UncompressedSize", entry.UncompressedSize)
-	echo("ZipEntry CompressionMethod", entry.CompressionMethod)
-	echo("ZipEntry ExtraFieldLength", entry.ExtraFieldLength)
-	echo("ZipEntry RelativeOffsetOfLocalFileHeader", entry.RelativeOffsetOfLocalFileHeader)
+	echoZipEntry(&entry)
 
 	// Using hardcoded 30 as go length include some padding,
 	// 16 added because seen extraFieldLength differ between
@@ -51,7 +46,7 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	o := int64(entry.RelativeOffsetOfLocalFileHeader)
 
 	echo("\nGet Zip File:")
-	body, err := fetchPartialData(url, 594828-o, (594828-o)+int64(length-1))
+	body, err := fetchPartialData(url, o, o+int64(length-1))
 
 	if err != nil {
 		return nil, err
@@ -170,6 +165,16 @@ func populateEntry(entry *ZipEntry, dir *ZipDirRecord, fn string) *ZipEntry {
 	entry.RelativeOffsetOfLocalFileHeader = dir.RelativeOffset()
 
 	return entry
+}
+
+func echoZipEntry(entry *ZipEntry) {
+	echo("\nZipEntry:")
+	echo(" Filename                       ", entry.Filename)
+	echo(" CompressedSize                 ", entry.CompressedSize)
+	echo(" UncompressedSize               ", entry.UncompressedSize)
+	echo(" CompressionMethod              ", entry.CompressionMethod)
+	echo(" ExtraFieldLength               ", entry.ExtraFieldLength)
+	echo(" RelativeOffsetOfLocalFileHeader", entry.RelativeOffsetOfLocalFileHeader)
 }
 
 func echo(v ...interface{}) {
