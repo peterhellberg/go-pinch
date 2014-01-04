@@ -1,5 +1,6 @@
 # Go Pinch
 
+[![Build Status](https://travis-ci.org/peterhellberg/go-pinch.png?branch=master)](https://travis-ci.org/peterhellberg/go-pinch)
 [![GoDoc](https://godoc.org/github.com/peterhellberg/go-pinch/pinch?status.png)](https://godoc.org/github.com/peterhellberg/go-pinch/pinch)
 
 ## Retrieve a file from inside a zip archive, over the network!
