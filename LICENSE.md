@@ -1,4 +1,4 @@
-Copyright (c) 2013 [Peter Hellberg](http://c7.se/), [Edward Patel](http://memention.com/)
+Copyright (c) 2013-2014 [Peter Hellberg](http://c7.se/), [Edward Patel](http://memention.com/)
 
 # MIT License
 

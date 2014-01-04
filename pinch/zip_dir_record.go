@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Peter Hellberg, Edward Patel.
+// Copyright (c) 2013-2014 Peter Hellberg, Edward Patel.
 // Licensed under the MIT License found in the LICENSE file.
 
 package pinch
@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// ZipDirRecord zip archive directory record, see http://en.wikipedia.org/wiki/ZIP_(file_format)#File_headers
 type ZipDirRecord struct {
 	CentralDirectoryFileHeaderSignature uint32
 	VersionMadeBy                       uint16
@@ -29,12 +30,14 @@ type ZipDirRecord struct {
 	RelativeOffsetOfLocalFileHeaderH    uint16
 }
 
+// CombinedLength calculate the combined length of the record + filename + extra fields
 func (d *ZipDirRecord) CombinedLength() int32 {
 	l := d.FileNameLength + d.ExtraFieldLength + d.FileCommentLength
 
 	return int32(46 + l)
 }
 
+// ExternalFileAttributes get the attribute field from its high and low parts
 func (d *ZipDirRecord) ExternalFileAttributes() uint32 {
 	l := uint32(d.ExternalFileAttributesL)
 	h := (uint32(d.ExternalFileAttributesH) << 16)
@@ -42,6 +45,7 @@ func (d *ZipDirRecord) ExternalFileAttributes() uint32 {
 	return l + h
 }
 
+// RelativeOffset get the relative offset field from its high and low parts
 func (d *ZipDirRecord) RelativeOffset() uint32 {
 	l := uint32(d.RelativeOffsetOfLocalFileHeaderL)
 	h := (uint32(d.RelativeOffsetOfLocalFileHeaderH) << 16)

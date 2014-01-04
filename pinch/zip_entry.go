@@ -1,8 +1,9 @@
-// Copyright (c) 2013 Peter Hellberg, Edward Patel.
+// Copyright (c) 2013-2014 Peter Hellberg, Edward Patel.
 // Licensed under the MIT License found in the LICENSE file.
 
 package pinch
 
+// ZipEntry collected zip record fields for file 'pinching'
 type ZipEntry struct {
 	Filename                        string
 	CompressedSize                  uint32
