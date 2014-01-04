@@ -31,7 +31,7 @@ func Get(url, fn string) ([]byte, error) {
 		return file, nil
 	}
 
-	return nil, errors.New("file not found")
+	return nil, errors.New("file not found in archive")
 }
 
 // GetZipFile Get a file from URL and ZipEntry
