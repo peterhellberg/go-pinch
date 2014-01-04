@@ -3,5 +3,8 @@ language: go
 go:
   - 1.2
 
+install:
+  - go get github.com/smartystreets/goconvey/convey
+
 script:
   - cd pinch && go test -v ./...
