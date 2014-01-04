@@ -31,10 +31,10 @@ func Get(url, fn string) ([]byte, error) {
 		return file, nil
 	}
 
-	return nil, errors.New("File not found")
+	return nil, errors.New("file not found")
 }
 
-// Get a file from URL and ZipEntry
+// GetZipFile Get a file from URL and ZipEntry
 func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 	entry.echo()
 
@@ -71,14 +71,15 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 			return body[startOffset : startOffset+file.OriginalSize()], nil
 		}
 
-		err = errors.New("Unimplemented compression method")
+		err = errors.New("unimplemented compression method")
 	} else {
-		err = errors.New("Corrupt file (signature error)")
+		err = errors.New("corrupt file (signature error)")
 	}
 
 	return nil, err
 }
 
+// GetZipDirectory Get the directory for a remote (url) zip archive
 func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 	var of int64
 	cl, err := getContentLength(url)
@@ -120,8 +121,8 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 			return nil, err
 		}
 
-		var l int32 = int32(rec.SizeOfCentralDirectory)
-		var i int32 = 0
+		var l = int32(rec.SizeOfCentralDirectory)
+		var i int32
 
 		// Read the entries
 		for l > 46 {
@@ -144,7 +145,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 				l = l - dir.CombinedLength()
 				i = i + dir.CombinedLength()
 			} else {
-				err = errors.New("Corrupt directory (signature error)")
+				err = errors.New("corrupt directory (signature error)")
 				break
 			}
 		}

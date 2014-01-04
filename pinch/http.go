@@ -41,7 +41,7 @@ func fetchPartialData(url string, sof, eof int64) ([]byte, error) {
 	req.Header.Add("Range", bytesRange)
 
 	// Create a client to be used to add the "Range:" header
-	client := rangeHttpClient(bytesRange)
+	client := rangeHTTPClient(bytesRange)
 
 	// Now run the request
 	resp, err := client.Do(req)
@@ -60,12 +60,12 @@ func fetchPartialData(url string, sof, eof int64) ([]byte, error) {
 	return body, err
 }
 
-func rangeHttpClient(bytesRange string) *http.Client {
+func rangeHTTPClient(bytesRange string) *http.Client {
 	return &http.Client{
 		// Go net/http does not keep headers in redirects, add specifically
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= 10 {
-				return errors.New("To many redirects")
+				return errors.New("to many redirects")
 			}
 
 			req.Header.Add("Range", bytesRange)
