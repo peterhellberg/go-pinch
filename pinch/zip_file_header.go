@@ -38,8 +38,8 @@ func (f *ZipFileHeader) CompressedSize() uint32 {
 
 // OriginalSize get the original size field from its high and low parts
 func (f *ZipFileHeader) OriginalSize() uint32 {
-	l := uint32(f.CompressedSizeL)
-	h := (uint32(f.CompressedSizeH) << 16)
+	l := uint32(f.UncompressedSizeL)
+	h := (uint32(f.UncompressedSizeH) << 16)
 
 	return l + h
 }
