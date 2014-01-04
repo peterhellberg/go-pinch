@@ -19,7 +19,7 @@ type ZipDirRecord struct {
 	Crc32                               uint32
 	CompressedSize                      uint32
 	UncompressedSize                    uint32
-	FileNameLength                      uint16
+	FilenameLength                      uint16
 	ExtraFieldLength                    uint16
 	FileCommentLength                   uint16
 	DiskNumberWhereFileStarts           uint16
@@ -32,7 +32,7 @@ type ZipDirRecord struct {
 
 // CombinedLength calculate the combined length of the record + filename + extra fields
 func (d *ZipDirRecord) CombinedLength() int32 {
-	l := d.FileNameLength + d.ExtraFieldLength + d.FileCommentLength
+	l := d.FilenameLength + d.ExtraFieldLength + d.FileCommentLength
 
 	return int32(46 + l)
 }
@@ -65,7 +65,7 @@ func (d *ZipDirRecord) echo() {
 	echo(" Crc32                              ", d.Crc32)
 	echo(" CompressedSize                     ", d.CompressedSize)
 	echo(" UncompressedSize                   ", d.UncompressedSize)
-	echo(" FileNameLength                     ", d.FileNameLength)
+	echo(" FilenameLength                     ", d.FilenameLength)
 	echo(" ExtraFieldLength                   ", d.ExtraFieldLength)
 	echo(" FileCommentLength                  ", d.FileCommentLength)
 	echo(" DiskNumberWhereFileStarts          ", d.DiskNumberWhereFileStarts)

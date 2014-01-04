@@ -135,7 +135,7 @@ func GetZipDirectory(url string) (map[string]ZipEntry, error) {
 
 				// Only collect files (skipping directories)
 				if (dir.ExternalFileAttributesH & 0x4000) != 0x4000 {
-					fn := string(body[i+46 : i+46+int32(dir.FileNameLength)])
+					fn := string(body[i+46 : i+46+int32(dir.FilenameLength)])
 
 					populateEntry(&entry, dir, fn)
 

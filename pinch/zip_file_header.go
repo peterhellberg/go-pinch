@@ -17,13 +17,13 @@ type ZipFileHeader struct {
 	CompressedSizeH          uint16
 	UncompressedSizeL        uint16
 	UncompressedSizeH        uint16
-	FileNameLength           uint16
+	FilenameLength           uint16
 	ExtraFieldLength         uint16
 }
 
 // StartOffset calculate the actual start offset for the file
 func (f *ZipFileHeader) StartOffset() uint32 {
-	l := uint32(f.FileNameLength) + uint32(f.ExtraFieldLength)
+	l := uint32(f.FilenameLength) + uint32(f.ExtraFieldLength)
 
 	return 30 + l
 }
