@@ -65,7 +65,7 @@ func rangeHTTPClient(bytesRange string) *http.Client {
 		// Go net/http does not keep headers in redirects, add specifically
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= 10 {
-				return errors.New("to many redirects")
+				return errors.New("too many redirects")
 			}
 
 			req.Header.Add("Range", bytesRange)
