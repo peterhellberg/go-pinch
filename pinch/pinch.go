@@ -59,14 +59,12 @@ func GetZipFile(url string, entry ZipEntry) ([]byte, error) {
 			data := body[startOffset : startOffset+file.CompressedSize()]
 
 			zipreader := flate.NewReader(bytes.NewReader(data))
+			defer zipreader.Close()
 
 			buf := new(bytes.Buffer)
 			buf.ReadFrom(zipreader)
 
-			b := buf.Bytes()
-			zipreader.Close()
-
-			return b, nil
+			return buf.Bytes(), nil
 		} else if file.CompressionMethod == 0 {
 			return body[startOffset : startOffset+file.OriginalSize()], nil
 		}
