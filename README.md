@@ -12,7 +12,7 @@ Library ([net/http](http://golang.org/pkg/net/http/) and
 
 Earlier versions were written in [Objective-C](https://github.com/epatel/pinch-objc), [Ruby](https://github.com/peterhellberg/pinch) and [Java](https://github.com/carlbenson/Pinch)
 
-*STATUS:* Working, but in active development :)
+*STATUS:* Working, but not in any known use :)
 
 ## Installation
 
