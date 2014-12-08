@@ -52,7 +52,7 @@ func main() {
 func getArgs(args []string) (string, string) {
 	// Make sure that we got two or three command line arguments
 	if len(args) < 2 || len(args) > 3 {
-		fatal("Usage: pinch <url> [file]")
+		fatal("Usage: go-pinch <url> [file]")
 	}
 
 	// Parse the URI parameter
