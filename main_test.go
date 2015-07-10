@@ -27,9 +27,9 @@ func TestPinchCommand(t *testing.T) {
 
 		Convey("with example URL", func() {
 			out, _ := runPinch(url, "")
-			fileList := "data.json\nimages/pine_cone.jpg\n"
 
-			So(out, ShouldResemble, fileList)
+			So(out, ShouldContainSubstring, "data.json")
+			So(out, ShouldContainSubstring, "images/pine_cone.jpg")
 		})
 
 		Convey("with example URL and file name", func() {
