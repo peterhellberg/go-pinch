@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2014 Peter Hellberg, Edward Patel.
-// Licensed under the MIT License found in the LICENSE file.
-
 package pinch
 
 // ZipFileHeader zip archive file header, see http://en.wikipedia.org/wiki/ZIP_(file_format)#File_headers

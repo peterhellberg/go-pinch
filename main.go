@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2014 Peter Hellberg, Edward Patel.
-// Licensed under the MIT License found in the LICENSE file.
-
 /*
 
 Retrieve a file from inside a zip file, over the network!
